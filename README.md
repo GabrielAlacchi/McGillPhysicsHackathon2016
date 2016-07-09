@@ -1,1 +1,0 @@
-# McGillPhysicsHackathon2016
