@@ -8,6 +8,45 @@
     </style>
 </head>
 <body>
+<div>
+    <p id = "orbital">
+        Orbital Information
+    </p>
+    <table id = "orbital_params">
+        <thead>
+        <tr>
+            <th>PARAMETER</th>
+            <th><em>x</em></th>
+            <th><em>y</em></th>
+            <th><em>z</em></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>Position vector (AU)</td>
+            <td><input type="text" name="x1" value="x1"> </td>
+            <td><input type="text" name="y1" value="y1"></td>
+            <td><input type="text" name="z1" value="z1"></td>
+        </tr>
+        <tr>
+            <td>Velocity vector (km/s)</td>
+            <td><input type="text" name="x1" value="x1"></td>
+            <td><input type="text" name="y1" value="y1"></td>
+            <td><input type="text" name="z1" value="z1"></td>
+        </tr>
+        <tr>
+            <td>Body mass (Earth Masses)</td>
+            <td><input type="text" name="m1" value="m1"></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
 <script src="build/three.js"></script>
 <script src="build/OrbitControls.js"></script>
 <script>
@@ -57,64 +96,5 @@
 
     render();
 </script>
-</body>
-<html>
-<head>
-    <title>My first Three.js app</title>
-
-	<link type = "text/css" rel = "stylesheet" href="stylesheet.css" />
-
-</head>
-<body>
-<h1 class = "CenterAligned">
-N-Body Black Magic Model
-<p class ="CenterAligned">
-by Gabe, Robert, Anthony, Nick, and Vincent
-</p>
-<script src="build/three.js"></script>
-<script src="build/OrbitControls.js"></script>
-<script>
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
-
-    var radius = 15;
-    var geometry = new THREE.SphereGeometry( radius, 32, 32 );
-    var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-    var sphere = new THREE.Mesh( geometry, material );
-    scene.add( sphere );
-
-    camera.position.z = 50;
-
-    document
-
-    var render = function () {
-        requestAnimationFrame( render );
-
-//        sphere.rotation.x += 0.01;
-//        sphere.rotation.y += 0.01;
-        var x = 5;
-        var y = 7;
-        var z = 8;
-
-        sphere.position.set(x,y,z);
-
-        controls = new THREE.OrbitControls( camera, renderer.domElement );
-        //controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
-        controls.enableDamping = false;
-        controls.dampingFactor = 0.25;
-        controls.enableZoom = false;
-
-        renderer.render(scene, camera);
-    };
-
-    render();
-</script>
-<div>
-<p>
-    Orbital Information
 </body>
 </html>
