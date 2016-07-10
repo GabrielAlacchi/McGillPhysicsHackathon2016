@@ -13,7 +13,8 @@ Simulation::Simulation(long double timestep, std::size_t n)
 void Simulation::addBody(vec3 position, vec3 velocity, long double mass) {
 	
 	std::lock_guard<std::mutex> lock(mu);	
-
+	
+	_buffer.resize(_buffer.getSize() + 1);
 	_bodies.emplace_back();
 	
 	//km/s to AU/day

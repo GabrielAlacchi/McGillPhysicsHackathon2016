@@ -25,7 +25,7 @@ public:
 	{ return _mass; }
 	
 	Body();
-	
+
 	void init(vec3 position, vec3 velocity, 
 		long double mass);
 	void tick(const std::vector<Body>& bodies, std::size_t myIndex, long double timeStep, FrameBuffer& buffer);
