@@ -6,7 +6,7 @@ using namespace vecmath;
 void Body::addToAccel(const Body& body) {
 	const vec3& bodyPosition = body.getPosition();
 	const vec3& displacement = 
-		bodyPosition - _position;
+		_position - bodyPosition;
 	const vec3& outwardsUnit = 
 		vecmath::normalize(displacement);
 	
