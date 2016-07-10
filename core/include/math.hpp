@@ -52,6 +52,7 @@ inline vec3 normalize(const vec3& a) {
 	long double mag = magnitude(a);
 	long double unitscale = 1.0 / mag;
 	vec3 res = unitscale * a;
+	return res;
 }
 
 inline vec3 cross(const vec3& a, const vec3& b) {
