@@ -6,12 +6,39 @@
         body { margin: 0; }
         canvas { width: 100%; height: 100% }
     </style>
+    <script src="http://code.jquery.com/jquery-3.0.0.min.js"></script>
+
 </head>
 <body>
 <div>
+
     <p id = "orbital">
         Orbital Information
     </p>
+
+    <button id="buttondatasend">Click Me!</button>
+    <script>
+        $(function() {
+            $("#buttondatasend").click(function(){
+                var data = {
+                    x: $('[name=x1]').val(),
+                    y: $('[name=x2]').val(),
+                    z: $('[name=x3]').val(),
+                    v_x: $('[name=v1]').val(),
+                    v_y: $('[name=v2]').val(),
+                    v_z: $('[name=v3]').val(),
+                    m: $('[name=m1]').val()
+                }
+                $.ajax({
+                    type: "POST",
+                    url: '/api/data',
+                    data: JSON.stringify(data)
+                });
+            })
+        });
+
+    </script>
+
     <table id = "orbital_params">
         <thead>
         <tr>
@@ -26,14 +53,14 @@
         <tr>
             <td>Position vector (AU)</td>
             <td><input type="text" name="x1" value="x1"> </td>
-            <td><input type="text" name="y1" value="y1"></td>
-            <td><input type="text" name="z1" value="z1"></td>
+            <td><input type="text" name="x2" value="y1"></td>
+            <td><input type="text" name="x3" value="z1"></td>
         </tr>
         <tr>
             <td>Velocity vector (km/s)</td>
-            <td><input type="text" name="x1" value="x1"></td>
-            <td><input type="text" name="y1" value="y1"></td>
-            <td><input type="text" name="z1" value="z1"></td>
+            <td><input type="text" name="v1" value="x1"></td>
+            <td><input type="text" name="v2" value="y1"></td>
+            <td><input type="text" name="v3" value="z1"></td>
         </tr>
         <tr>
             <td>Body mass (Earth Masses)</td>
@@ -72,6 +99,7 @@
     firebase.initializeApp(config);
 </script>
 
+
 <script>
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -99,7 +127,7 @@
         frameNum += frameObj.frames.length;
     });
 
-    var posScale =180.0;
+    var posScale =1000.0;
     camera.position.z = 400;
 
     var buffered = function() {

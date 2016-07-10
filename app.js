@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var tcp = require('net');
 
 var app = express();
 
@@ -21,6 +22,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.post('/api/data', function(sReq, sRes) {
+    console.log(sReq.body)
+    var obj = JSON.parse(sReq.body);
+
+    var str = obj.x + "_" + obj.y + "_" + obj.z + "_" + obj.v_x + "_" + obj.v_y + "_" + obj.v_y + "_" + obj.m;
+    var s = new net.Socket();
+    s.on('connect', function() {
+        s.send(str);
+        sRes.end();
+    });
+    s.connect(5000, "127.0.0.1");
+
+});
+
 app.use('/', routes);
 app.use('/users', users);
 
@@ -30,6 +45,8 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
+
 
 // error handlers
 
