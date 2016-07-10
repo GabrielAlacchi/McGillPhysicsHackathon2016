@@ -5,13 +5,18 @@ using namespace vecmath;
 
 Simulation::Simulation(long double timestep, std::size_t n) 
 	: _timestep(timestep),
-	  _buffer(n)
+	  _buffer(n, timestep)
 {
 	_bodies.reserve(n);
 }
 
 void Simulation::addBody(vec3 position, vec3 velocity, long double mass) {
 	_bodies.emplace_back();
+	
+	//km/s to AU/day
+	constexpr long double conversionFactor = 1.0 / 1731.45684;
+	velocity = conversionFactor * velocity;
+	
 	_bodies.back().init(position, velocity, 
 		mass);
 }

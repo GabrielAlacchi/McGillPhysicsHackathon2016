@@ -1,8 +1,21 @@
 
 #include "framebuffer.hpp"
 #include <unistd.h>
+#include <fstream>
 
 using namespace vecmath;
+
+void FrameBuffer::appendToFile(std::string json, bool start) {
+	std::ofstream file("/tmp/buffer.json", std::ios::out | std::ios::app);
+
+	if (start) {
+		file << "{\n\"timestep\": " << _timestep << ",\n\"frames\": "; 
+		file << "[\n";
+	} else {
+		file << ",\n";
+	}
+	file << json;
+}
 
 std::string FrameBuffer::unloadJSON() {
 	std::string json = "{ \"frame\": [";
@@ -12,7 +25,7 @@ std::string FrameBuffer::unloadJSON() {
 		
 		json += firstPass ? "" : ",";
 		json += "{";
-		json += " \"pos\":{\"x\": " + std::to_string(body.pos.x);
+		json += " \"pos\": {\"x\": " + std::to_string(body.pos.x);
 		json += ",\"y\": " + std::to_string(body.pos.y);
 		json += ",\"z\": " + std::to_string(body.pos.z);
 		json += "},\"mass\": " + std::to_string(body.mass);
@@ -31,9 +44,9 @@ std::string FrameBuffer::unloadJSON() {
 
 }
 
-FrameBuffer::FrameBuffer(std::size_t n) 
-{
+FrameBuffer::FrameBuffer(std::size_t n, long double timestep) {
 	_frame.resize(n);
+	_timestep = timestep;
 }
 
 void FrameBuffer::resize(std::size_t n) {
@@ -50,10 +63,38 @@ void FrameBuffer::setNthBody(std::size_t n, vec3 pos, long double mass, long dou
 }
 
 void FrameBuffer::sendFrame() {
-	std::string json = unloadJSON();
-	std::string curl = "curl 'https://nbodyblackmagic.firebaseio.com/nbodyblackmagic/frame.json' -X PUT -H 'Accept-Encoding: gzip, deflate, sdch, br' -H 'Accept-Language: en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4' -H 'User-Agent: cUrl' -H 'Content-Type: application/json' -H 'Accept: ​/​' -H 'Cache-Control: no-cache' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary $'" + json + "' --compressed";
+	
+	if (_counter == 0) {
+		std::fstream testStream("/tmp/buffer.json");
+		if (testStream.good()) {
+			testStream.close();
+			system("rm /tmp/buffer.json");
+		}
+	}
 
-	system(curl.c_str());
+	std::string json = unloadJSON();
+
+	bool start = _counter % 60 == 0;	
+	if (start) {
+	
+		if (_counter > 0) {
+			std::ofstream file("/tmp/buffer.json", std::ios::out | std::ios::app);
+			file << "\n]}";
+			file.close();	
+		
+			std::string curl = "curl 'https://nbodyblackmagic.firebaseio.com/nbodyblackmagic/frame.json' -X PUT -H 'Accept-Encoding: gzip, deflate, sdch, br' -H 'Accept-Language: en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4' -H 'User-Agent: cUrl' -H 'Content-Type: application/json' -H 'Accept: ​/​' -H 'Cache-Control: no-cache' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary @/tmp/buffer.json --compressed";
+	
+			system(curl.c_str());
+
+			//The dirtiest of dirty hacks	
+			system("rm /tmp/buffer.json");
+		}
+
+	}
+
+	++_counter;
+
+	appendToFile(json, start);
 
 }
 
