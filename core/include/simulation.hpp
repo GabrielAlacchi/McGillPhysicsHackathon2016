@@ -4,11 +4,13 @@
 
 #include "body.hpp"
 #include <vector>
+#include <mutex>
 
 class Simulation {
 	std::vector<Body> _bodies;
 	long double _timestep;
-	FrameBuffer _buffer;	
+	FrameBuffer _buffer;
+	std::mutex mu;	
 public:
 	
 	inline long double getTimestep() const 

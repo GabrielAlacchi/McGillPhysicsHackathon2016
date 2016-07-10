@@ -85,8 +85,11 @@ void FrameBuffer::sendFrame() {
 			std::string curl = "curl 'https://nbodyblackmagic.firebaseio.com/nbodyblackmagic/frame.json' -X PUT -H 'Accept-Encoding: gzip, deflate, sdch, br' -H 'Accept-Language: en-US,en;q=0.8,fr-CA;q=0.6,fr;q=0.4' -H 'User-Agent: cUrl' -H 'Content-Type: application/json' -H 'Accept: ​/​' -H 'Cache-Control: no-cache' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary @/tmp/buffer.json --compressed";
 	
 			system(curl.c_str());
-
+			
+			std::string dirtyHack = "python ./src/createPlots.py " + std::to_string(_counter);
+			dirtyHack += "; rm /tmp/buffer.json";	
 			//The dirtiest of dirty hacks	
+			//system(dirtyHack.c_str());
 			system("rm /tmp/buffer.json");
 		}
 

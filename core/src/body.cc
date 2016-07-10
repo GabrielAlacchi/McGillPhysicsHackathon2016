@@ -40,7 +40,7 @@ void Body::tick(const std::vector<Body>& bodies, std::size_t myIndex, long doubl
 	//Initialize the deltaV and deltaPos with the last frame's acceleration and velocity
 	vec3 deltaV = timeStep * 
 		_acceleration;
-	vec3 deltaPos = timeStep * _velocity;
+	vec3 deltaPos = timeStep * _velocity + 0.5 * timeStep * timeStep * _acceleration;
 
 	_acceleration = vecmath::zeroVec;
 	_potential = 0.0;
