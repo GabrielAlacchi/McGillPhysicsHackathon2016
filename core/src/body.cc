@@ -16,6 +16,9 @@ void Body::addToAccel(const Body& body) {
 	
 	long double denominator = std::pow(displacementScalar, 2);
 	
+	if (denominator == 0.0)
+		return;
+
 	long double magnitude = numerator / denominator;
 	_acceleration = _acceleration 
 				+ magnitude * outwardsUnit; 	
