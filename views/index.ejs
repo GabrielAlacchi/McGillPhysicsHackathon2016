@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>My first Three.js app</title>
+    <title>N-Body</title>
 
     <style>
         body { margin: 0; }
@@ -18,32 +18,38 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
 
-    var radius = 15;
-    var geometry = new THREE.SphereGeometry( radius, 32, 32 );
-    var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-    var sphere = new THREE.Mesh( geometry, material );
-    scene.add( sphere );
 
-    camera.position.z = 50;
+
+    camera.position.z = 400;
 
     document
 
     var render = function () {
         requestAnimationFrame( render );
 
+        var sphereNumber = 5;
+     for (i = 0; i < sphereNumber; i++) {
+
 //        sphere.rotation.x += 0.01;
 //        sphere.rotation.y += 0.01;
-        var x = 5;
-        var y = 7;
-        var z = 8;
+         var x = 5 + 20 * i;
+         var y = 7;
+         var z = 8;
+         var mass = 10;
+         var radius = mass;
+         var geometry = new THREE.SphereGeometry(radius, 32, 32);
+         var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+         var sphere = new THREE.Mesh(geometry, material);
+         scene.add(sphere);
 
-        sphere.position.set(x,y,z);
+         sphere.position.set(x*i, y, z);
+     }
 
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         //controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
         controls.enableDamping = false;
         controls.dampingFactor = 0.25;
-        controls.enableZoom = false;
+        controls.enableZoom = true;
 
         renderer.render(scene, camera);
     };
