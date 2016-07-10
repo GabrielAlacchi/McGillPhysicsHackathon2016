@@ -121,13 +121,13 @@
     var objects = []
 
     firebase.database().ref('/nbodyblackmagic/frame').on('value', function(snapshot) {
-        var frameObj = snapsashot.val()
+        var frameObj = snapshot.val()
         timestep = frameObj.timestep;
         frames = frames.concat(frameObj.frames);
         frameNum += frameObj.frames.length;
     });
 
-    var posScale =1000.0;
+    var posScale = 250.0;
     camera.position.z = 400;
 
     var buffered = function() {

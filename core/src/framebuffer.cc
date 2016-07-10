@@ -74,7 +74,7 @@ void FrameBuffer::sendFrame() {
 
 	std::string json = unloadJSON();
 
-	bool start = _counter % 60 == 0;	
+	bool start = _counter % 180 == 0;	
 	if (start) {
 	
 		if (_counter > 0) {

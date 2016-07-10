@@ -28,11 +28,10 @@ app.post('/api/data', function(sReq, sRes) {
 
     var str = obj.x + "_" + obj.y + "_" + obj.z + "_" + obj.v_x + "_" + obj.v_y + "_" + obj.v_y + "_" + obj.m;
     var s = new net.Socket();
-    s.on('connect', function() {
-        s.send(str);
-        sRes.end();
+    s.connect(5000, "127.0.0.1", function() {
+	s.write(str);
+	sRes.end();
     });
-    s.connect(5000, "127.0.0.1");
 
 });
 
