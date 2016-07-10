@@ -46,9 +46,32 @@
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyBvBjXXUx95wGs4A3n0CtlHNL_bxfKU6xM",
+        authDomain: "nbodyblackmagic.firebaseapp.com",
+        databaseURL: "https://nbodyblackmagic.firebaseio.com",
+        storageBucket: "nbodyblackmagic.appspot.com",
+    };
+    firebase.initializeApp(config);
+</script>
 
 <script src="build/three.js"></script>
 <script src="build/OrbitControls.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyBvBjXXUx95wGs4A3n0CtlHNL_bxfKU6xM",
+        authDomain: "nbodyblackmagic.firebaseapp.com",
+        databaseURL: "https://nbodyblackmagic.firebaseio.com",
+        storageBucket: "nbodyblackmagic.appspot.com",
+    };
+    firebase.initializeApp(config);
+</script>
+
 <script>
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -57,41 +80,80 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
 
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+    //controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
 
+    var frames = [];
+    var frameNum = 0;
+    var timestep = 0;
+    var bufferSize = 180;
+    var renderFrame = 0;
+
+    var objects = []
+
+    firebase.database().ref('/nbodyblackmagic/frame').on('value', function(snapshot) {
+        var frameObj = snapshot.val()
+        timestep = frameObj.timestep;
+        frames = frames.concat(frameObj.frames);
+        frameNum += frameObj.frames.length;
+    });
+
+    var posScale =180.0;
     camera.position.z = 400;
 
-    document
+    var buffered = function() {
+        return (frames.length >= bufferSize)
+    }
 
     var render = function () {
-        requestAnimationFrame( render );
+         setTimeout(function() {
+             requestAnimationFrame( render );
+         }, 1000 / 30)
 
-        var sphereNumber = 5;
-     for (i = 0; i < sphereNumber; i++) {
+         if (buffered()) {
+             var frame = frames[renderFrame].frame;
+             //Render the frame
+             for (i = 0; i < frame.length; ++i) {
+                 var body = frame[i];
+                 if (i >= objects.length) {
+                     var mass = body.mass;
+                     var radius = 8 + 3 * Math.log10(mass + 1);
+                     objects.push(
+                     {
+                         geometry: new THREE.SphereGeometry(radius, 32, 32),
+                         mesh: new THREE.MeshBasicMaterial({color: 0xffff00}),
+                         sphere: undefined
+                     });
+                     objects[i].sphere = new THREE.Mesh(objects[i].geometry, objects[i].mesh);
+                     scene.add(objects[i].sphere);
 
-//        sphere.rotation.x += 0.01;
-//        sphere.rotation.y += 0.01;
-         var x = 5 + 20 * i;
-         var y = 7;
-         var z = 8;
-         var mass = 10;
-         var radius = mass;
-         var geometry = new THREE.SphereGeometry(radius, 32, 32);
-         var material = new THREE.MeshBasicMaterial({color: 0xffff00});
-         var sphere = new THREE.Mesh(geometry, material);
-         scene.add(sphere);
+                 }
 
-         sphere.position.set(x*i, y, z);
-     }
+                 var objectToRender = objects[i];
 
-        controls = new THREE.OrbitControls( camera, renderer.domElement );
-        //controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
-        controls.enableDamping = false;
-        controls.dampingFactor = .25;
-        controls.enableZoom = false;
-        controls.rotateSpeed = 0.05;
+                 var x = body.pos.x * posScale;
+                 var y = body.pos.y * posScale;
+                 var z = body.pos.z * posScale;
+                 objectToRender.sphere.position.set(x, y, z);
 
-        renderer.render(scene, camera);
+             }
+
+
+
+             if (renderFrame < frames.length - 1) {
+                 ++renderFrame;
+             }
+
+         }
+
+         controls.enableDamping = false;
+         controls.dampingFactor = .25;
+         controls.enableZoom = true;
+         controls.rotateSpeed = 1;
+         controls.zoomSpeed = 1;
+
+         renderer.render(scene, camera);
     };
 
     render();
