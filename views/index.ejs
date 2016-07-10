@@ -121,7 +121,7 @@
     var objects = []
 
     firebase.database().ref('/nbodyblackmagic/frame').on('value', function(snapshot) {
-        var frameObj = snapshot.val()
+        var frameObj = snapsashot.val()
         timestep = frameObj.timestep;
         frames = frames.concat(frameObj.frames);
         frameNum += frameObj.frames.length;
