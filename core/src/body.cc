@@ -20,11 +20,14 @@ void Body::addToAccel(const Body& body) {
 		return;
 
 	long double magnitude = numerator / denominator;
-	_acceleration = _acceleration 
+
+	#pragma omp critical 
+	{
+		_acceleration = _acceleration 
 				+ magnitude * outwardsUnit; 	
 
-	_potential += magnitude * _mass * displacementScalar;
-
+		_potential += magnitude * _mass * displacementScalar;
+	}
 }
 
 Body::Body() 
@@ -48,6 +51,8 @@ void Body::tick(const std::vector<Body>& bodies, std::size_t myIndex, long doubl
 	_acceleration = vecmath::zeroVec;
 	_potential = 0.0;
 	std::size_t size = bodies.size();
+	
+	#pragma omp parallel for
 	for (std::size_t i = 0; i < size; ++i) {
 		if (i != myIndex) {
 			const Body& body = bodies[i];
