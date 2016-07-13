@@ -39,6 +39,9 @@ jspm_packages
 # Webstorm editor
 .idea/
 
+#DS_Store
+*.DS_Store
+
 # Core build directory
 core/build
 
