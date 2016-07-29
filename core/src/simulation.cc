@@ -34,7 +34,6 @@ void Simulation::tick() {
 		body.tick(_bodies, i, _timestep, _buffer);
 	}
 
-	//TODO: Add code to upload this frame
 	_buffer.sendFrame();
 	
 }
