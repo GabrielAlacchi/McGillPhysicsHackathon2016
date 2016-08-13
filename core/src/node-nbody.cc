@@ -1,5 +1,5 @@
 
-#include "node_nbody.hpp"
+#include "node-nbody.hpp"
 
 namespace NodeBindings {
 
@@ -13,6 +13,8 @@ namespace NodeBindings {
     using v8::Persistent;
     using v8::String;
     using v8::Value;
+
+    using namespace v8;
 
     Persistent<Function> Nbody::constructor;
 
@@ -31,7 +33,8 @@ namespace NodeBindings {
         tpl->InstanceTemplate()->SetInternalFieldCount(1);
   
           // Prototype
-        NODE_SET_PROTOTYPE_METHOD(tpl, "plusOne", PlusOne);
+        NODE_SET_PROTOTYPE_METHOD(tpl, "addBody", AddBody);
+        NODE_SET_PROTOTYPE_METHOD(tpl, "renderFrames", RenderFrames);
 
         constructor.Reset(isolate, tpl->GetFunction());
         exports->Set(String::NewFromUtf8(isolate, "Nbody"),
@@ -60,10 +63,45 @@ namespace NodeBindings {
         Isolate* isolate = args.GetIsolate();
         
         Nbody* nbody = ObjectWrap::Unwrap<Nbody>(args.Holder());
+        
+        if (!args[0]->IsObject())
+            return;
 
+        Handle<Object> object = Handle<Object>::Cast(args[0]);
 
+        using namespace detail;
+
+        vecmath::vec3 position = {
+            object->Get(newString(isolate, "x"))->NumberValue(),
+            object->Get(newString(isolate, "y"))->NumberValue(),
+            object->Get(newString(isolate, "z"))->NumberValue()
+        };
+
+        vecmath::vec3 velocity = {      
+            object->Get(newString(isolate, "v_x"))->NumberValue(),
+            object->Get(newString(isolate, "v_y"))->NumberValue(),
+            object->Get(newString(isolate, "v_z"))->NumberValue()
+        };
+        
+        long double mass = object->Get(newString(isolate, "m"))->NumberValue();
+
+        nbody->_sim.addBody(position, velocity, mass);
 
     }
+
+    void Nbody::RenderFrames(const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+
+        Nbody* nbody = ObjectWrap::Unwrap<Nbody>(args.Holder());
+
+        int numberOfFrames = args[0]->IsUndefined() ? 0 : args[0]->Int32Value();
+        
+        Handle<Function> callback = Handle<Function>::Cast(args[1]);
+
+        nbody->_sim.renderFramesAsync(numberOfFrames, callback, isolate);
+
+    }
+
 
 }
 

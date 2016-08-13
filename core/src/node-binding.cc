@@ -1,7 +1,7 @@
 
 // node-binding.cc
 #include <node.h>
-#include "node_nbody.hpp"
+#include "node-nbody.hpp"
 
 namespace NodeBindings {
 
@@ -12,7 +12,7 @@ namespace NodeBindings {
           Nbody::Init(exports);
     }
 
-    NODE_MODULE(nbody-darkmagic, InitAll)
+    NODE_MODULE(node_nbody, InitAll)
 
 }  // namespace demo
 

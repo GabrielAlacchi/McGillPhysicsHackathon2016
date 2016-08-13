@@ -1,10 +1,13 @@
-all: sim
+all: debug release
 
-CC=g++
-CFLAGS=-std=c++11 -g -pthread -fopenmp
-INCLUDE=-I./include
-SRC_FILES = $(wildcard ./src/*.cc)
+configure: 
+	node-gyp configure
 
-sim:
-	$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) -o ./build/$@
-	
+debug: configure
+	node-gyp build --debug
+
+release: configure
+	node-gyp build
+
+clean:
+	find build -type f -maxdepth 1 -exec rm -fv {} \;
